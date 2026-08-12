@@ -1,4 +1,4 @@
-# DongJunV$
+# DongJunV4
 
 DongJunV4 uses all modules openly. It is optimized for all CC/blatant users and supports over 30 Roblox games.
 User profiles and configuration remain untouched except for controlled
