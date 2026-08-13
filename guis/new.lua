@@ -3678,7 +3678,7 @@ function mainapi:CreateGUI()
 	logov4.Position = UDim2.new(1, 1, 0, 1)
 	logov4.BackgroundTransparency = 1
 	logov4.Image = getcustomasset('newvape/assets/new/guiv4.png')
-	logov4.Size = UDim2.fromOffset(28, 16)
+	logov4.Size = UDim2.fromOffset(45, 45)
 	logov4.Parent = logo
 	local children = Instance.new('Frame')
 	children.Name = 'Children'
