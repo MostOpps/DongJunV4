@@ -12,7 +12,7 @@ pcall(function()
 	t.Size = UDim2.new(1, 0, 0, 50)
 	t.Position = UDim2.new(0, 0, 0.5, -25)
 	t.BackgroundTransparency = 1
-	t.Text = "Loading KingV4..."
+	t.Text = "Loading DongJunV4..."
 	t.TextColor3 = Color3.fromRGB(200, 200, 200)
 	t.TextScaled = true
 	t.Font = Enum.Font.SourceSansBold
@@ -44,9 +44,9 @@ pcall(function()
 	run = function(func)
 		local ok, err = xpcall(func, debug.traceback)
 		if not ok then
-			warn('[KingV4V7] module failed to load: ' .. tostring(err))
+			warn('[DongJunV4] module failed to load: ' .. tostring(err))
 			pcall(function()
-				vape:CreateNotification('KingV4', 'Module error: ' .. tostring(err):match('(.+)\n') or tostring(err), 10, 'alert')
+				vape:CreateNotification('DongJunV4', 'Module error: ' .. tostring(err):match('(.+)\n') or tostring(err), 10, 'alert')
 			end)
 		end
 	end
@@ -2669,7 +2669,7 @@ run(function()
             return nil
         end
 
-        local function AutoClickKingV4()
+        local function AutoClick()
             if Thread then task.cancel(Thread) end
             Thread = task_spawn(function()
                 repeat
@@ -2715,7 +2715,7 @@ run(function()
                             ActivationScheduled = task.delay(MIN_HOLD_TIME, function()
                                 ActivationScheduled = nil
                                 if inputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
-                                    AutoClickKingV4()
+                                    AutoClick()
                                 end
                             end)
                         end
@@ -2798,7 +2798,7 @@ run(function()
 
     local function createkitrender(plr)
         local icon = Instance.new("ImageLabel")
-        icon.Name = "KingV4V7KitRender" 
+        icon.Name = "KitRender" 
         icon.AnchorPoint = Vector2.new(1, 0.5)
         icon.BackgroundTransparency = 1
         icon.Position = UDim2.new(1.05, 0, 0.5, 0)
@@ -2830,7 +2830,7 @@ run(function()
         end
         
         for _, v in ipairs(PlayerGui:GetDescendants()) do
-            if v:IsA("ImageLabel") and v.Name == "KingV4V7KitRender" then  
+            if v:IsA("ImageLabel") and v.Name == "KitRender" then  
                 v:Destroy()
             end
         end
@@ -2896,7 +2896,7 @@ run(function()
             local card = container:FindFirstChild("1") and container["1"]:FindFirstChild("MatchDraftPlayerCard")
             if not card then return end
             
-            local icon = card:FindFirstChild("KingV4V7KitRender")  
+            local icon = card:FindFirstChild("KitRender")  
             if not icon then
                 icon = createkitrender(playerFound)
                 icon.Parent = card
@@ -2931,7 +2931,7 @@ run(function()
     local function createKitLabel(parent, kitImage)
         if kitLabels[parent] then kitLabels[parent]:Destroy() end
         local kitLabel = Instance.new("ImageLabel")
-        kitLabel.Name = "KingV4V7KitIcon"
+        kitLabel.Name = "KitIcon"
         kitLabel.Size = UDim2.new(1, 0, 1, 0)
         kitLabel.Position = UDim2.new(1.1, 0, 0, 0)
         kitLabel.BackgroundTransparency = 1
@@ -4610,17 +4610,17 @@ run(function()
 	local OtherProjectiles
 	local Blacklist
 	local SortMethod
-	local KingV4PAChargePercent
+	local PAChargePercent
 	local RandomHeadPercent
 	local RandomTorsoPercent
 	local CustomPrediction
 	local HorizontalMultiplier
 	local VerticalMultiplier
-	local KingV4PAWorkMode
-	local KingV4PAHideCursor
-	local KingV4PACursorViewMode
-	local KingV4PACursorLimitBow
-	local KingV4PACursorShowGUI
+	local PAWorkMode
+	local PAHideCursor
+	local PACursorViewMode
+	local PACursorLimitBow
+	local PACursorShowGUI
 	local cursorRenderConnection
 	local lastGUIState = false
 	local rayCheck = cloneRaycast()
@@ -4715,13 +4715,13 @@ run(function()
 	end
 
 	local function shouldHideCursor()
-		if not KingV4PAHideCursor or not KingV4PAHideCursor.Enabled then return false end
-		if KingV4PACursorShowGUI and KingV4PACursorShowGUI.Enabled and isGUIOpen() then return false end
-		if KingV4PACursorLimitBow and KingV4PACursorLimitBow.Enabled and not hasBowEquipped() then return false end
+		if not PAHideCursor or not PAHideCursor.Enabled then return false end
+		if PACursorShowGUI and PACursorShowGUI.Enabled and isGUIOpen() then return false end
+		if PACursorLimitBow and PACursorLimitBow.Enabled and not hasBowEquipped() then return false end
 		local inFirstPerson = isFirstPerson()
-		if KingV4PACursorViewMode then
-			if KingV4PACursorViewMode.Value == 'First Person' then return inFirstPerson
-			elseif KingV4PACursorViewMode.Value == 'Third Person' then return not inFirstPerson
+		if PACursorViewMode then
+			if PACursorViewMode.Value == 'First Person' then return inFirstPerson
+			elseif PACursorViewMode.Value == 'Third Person' then return not inFirstPerson
 			end
 		end
 		return true
@@ -4740,10 +4740,10 @@ run(function()
 	end
 
 	local function shouldPAWork()
-		if not KingV4PAWorkMode then return true end
+		if not PAWorkMode then return true end
 		local inFirstPerson = isFirstPerson()
-		if KingV4PAWorkMode.Value == 'First Person' then return inFirstPerson
-		elseif KingV4PAWorkMode.Value == 'Third Person' then return not inFirstPerson
+		if PAWorkMode.Value == 'First Person' then return inFirstPerson
+		elseif PAWorkMode.Value == 'Third Person' then return not inFirstPerson
 		end
 		return true
 	end
@@ -4859,7 +4859,7 @@ run(function()
 				if PAFOVCircle then
 					runPAFOVCircle(PAFOVCircle.Enabled)
 				end
-				if KingV4PAHideCursor and KingV4PAHideCursor.Enabled and not cursorRenderConnection then
+				if PAHideCursor and PAHideCursor.Enabled and not cursorRenderConnection then
 					cursorRenderConnection = runService.RenderStepped:Connect(function()
 						checkGUIState()
 						updateCursor()
@@ -5046,10 +5046,10 @@ run(function()
 						local customDrawDuration = 5
 						if AutoCharge.Enabled then
 							if projmeta.projectile:find('arrow') then
-								customDrawDuration = 0.58 * (KingV4PAChargePercent.Value / 100)
+								customDrawDuration = 0.58 * (PAChargePercent.Value / 100)
 							elseif projmeta.projectile:find('frosty_snowball') then
 								local chargeTime = projmeta.maxDrawDurationSeconds or meta.maxDrawDurationSeconds or 0.8
-								customDrawDuration = chargeTime * (KingV4PAChargePercent.Value / 100)
+								customDrawDuration = chargeTime * (PAChargePercent.Value / 100)
 							end
 						else
 							customDrawDuration = 0.05
@@ -5114,7 +5114,7 @@ run(function()
 		Tooltip = 'Prioritize targets when multiple are in range'
 	})
 
-	KingV4PAWorkMode = ProjectileAimbot:CreateDropdown({
+	PAWorkMode = ProjectileAimbot:CreateDropdown({
 		Name = 'PA Work Mode',
 		List = {'First Person', 'Third Person', 'Both'},
 		Default = 'Both',
@@ -5174,14 +5174,14 @@ run(function()
 	end
 	updateRandomizeVisibility()
 
-	KingV4PAHideCursor = ProjectileAimbot:CreateToggle({
+	PAHideCursor = ProjectileAimbot:CreateToggle({
 		Name = 'Hide Cursor',
 		Default = false,
 		Tooltip = 'Hides the cursor while aiming',
 		Function = function(callback)
-			if KingV4PACursorViewMode then KingV4PACursorViewMode.Object.Visible = callback end
-			if KingV4PACursorLimitBow then KingV4PACursorLimitBow.Object.Visible = callback end
-			if KingV4PACursorShowGUI then KingV4PACursorShowGUI.Object.Visible = callback end
+			if PACursorViewMode then PACursorViewMode.Object.Visible = callback end
+			if PACursorLimitBow then PACursorLimitBow.Object.Visible = callback end
+			if PACursorShowGUI then PACursorShowGUI.Object.Visible = callback end
 			if callback and ProjectileAimbot.Enabled then
 				if not cursorRenderConnection then
 					cursorRenderConnection = runService.RenderStepped:Connect(function()
@@ -5204,38 +5204,38 @@ run(function()
 		end
 	})
 
-	KingV4PACursorViewMode = ProjectileAimbot:CreateDropdown({
+	PACursorViewMode = ProjectileAimbot:CreateDropdown({
 		Name = 'Cursor View Mode',
 		List = {'First Person', 'Third Person', 'Both'},
 		Default = 'First Person',
 		Darker = true,
 		Visible = false,
 		Function = function()
-			if ProjectileAimbot.Enabled and KingV4PAHideCursor.Enabled then
+			if ProjectileAimbot.Enabled and PAHideCursor.Enabled then
 				updateCursor()
 			end
 		end
 	})
 
-	KingV4PACursorLimitBow = ProjectileAimbot:CreateToggle({
+	PACursorLimitBow = ProjectileAimbot:CreateToggle({
 		Name = 'Limit to Bow',
 		Darker = true,
 		Visible = false,
 		Tooltip = 'Only hides cursor when bow/crossbow is equipped',
 		Function = function()
-			if ProjectileAimbot.Enabled and KingV4PAHideCursor.Enabled then
+			if ProjectileAimbot.Enabled and PAHideCursor.Enabled then
 				updateCursor()
 			end
 		end
 	})
 
-	KingV4PACursorShowGUI = ProjectileAimbot:CreateToggle({
+	PACursorShowGUI = ProjectileAimbot:CreateToggle({
 		Name = 'Show on GUI',
 		Darker = true,
 		Visible = false,
 		Tooltip = 'Shows cursor when a GUI is open',
 		Function = function()
-			if ProjectileAimbot.Enabled and KingV4PAHideCursor.Enabled then
+			if ProjectileAimbot.Enabled and PAHideCursor.Enabled then
 				updateCursor()
 			end
 		end
@@ -5296,10 +5296,10 @@ run(function()
 		Name = "AutoCharge",
 		Default = true,
 		Function = function(v)
-			if KingV4PAChargePercent and KingV4PAChargePercent.Object then KingV4PAChargePercent.Object.Visible = v end
+			if PAChargePercent and PAChargePercent.Object then PAChargePercent.Object.Visible = v end
 		end
 	})
-	KingV4PAChargePercent = ProjectileAimbot:CreateSlider({
+	PAChargePercent = ProjectileAimbot:CreateSlider({
 		Name = 'Charge Percent',
 		Min = 1,
 		Max = 100,
@@ -5365,19 +5365,19 @@ run(function()
 						elseif typeof(bedwars.ShopTaxController.hasTax) == "boolean" then
 							bedwars.ShopTaxController.hasTax = false
 						else
-							vape:CreateNotification('TaxRemover',`Tax Remover error the type of hasTax is {typeof(bedwars.ShopTaxController.hasTax)} report to KingV4 `,16,'alert')
+							vape:CreateNotification('TaxRemover',`Tax Remover error the type of hasTax is {typeof(bedwars.ShopTaxController.hasTax)} report to DongJunV4 `,16,'alert')
 							break
 						end
 						if typeof(bedwars.ShopTaxController.taxedItems) == "table" then
 							bedwars.ShopTaxController.taxedItems = {}
 						else
-							vape:CreateNotification('TaxRemover',`Tax Remover error the type of taxedItems is NOT a TABLE PLEASE report to KingV4  ASAP`,16,'alert')
+							vape:CreateNotification('TaxRemover',`Tax Remover error the type of taxedItems is NOT a TABLE PLEASE report to DongJunV4  ASAP`,16,'alert')
 							break
 						end
 						if typeof(bedwars.ShopTaxController.addedTaxMap) == "table" then
 							bedwars.ShopTaxController.addedTaxMap = {}
 						else
-							vape:CreateNotification('TaxRemover',`Tax Remover error the type of addedTaxMap is NOT a TABLE PLEASE report to KingV4  ASAP`,16,'alert')
+							vape:CreateNotification('TaxRemover',`Tax Remover error the type of addedTaxMap is NOT a TABLE PLEASE report to DongJunV4  ASAP`,16,'alert')
 							break
 						end
 						task.wait()
@@ -7630,7 +7630,7 @@ run(function()
                             newKitImage = res.renderImage
                         else
                             if not suc then
-                                warn(`[KingV4V7 MODULE ISSUE]: [Module - NameTags (Using bedwars.BedwarsKitMeta)] [Error]: {res}`)
+                                warn(`[DongJunV4 MODULE ISSUE]: [Module - NameTags (Using bedwars.BedwarsKitMeta)] [Error]: {res}`)
                             end
                             newKitImage = kitImageIds[kit] or kitImageIds['none']
                         end
@@ -15223,9 +15223,9 @@ run(function()
 	local processing = {}
 
 	local _req = (syn and syn.request) or (http_request and function(t) return http_request(t) end) or request or function() return {Body='{}'} end
-	if not getgenv()._KingV4v7_getBackendUrl then
+	if not getgenv()._DongJunV4_getBackendUrl then
 		local _cachedUrl
-		getgenv()._KingV4v7_getBackendUrl = function()
+		getgenv()._DongJunV4_getBackendUrl = function()
 			if _cachedUrl then return _cachedUrl end
 			local ok, res = pcall(function()
 				return _req({Url='https://gist.githubusercontent.com/poopparty/a817668f8805b6d44fa54ff13dc8edf4/raw/url.txt',Method='GET'})
@@ -15236,7 +15236,7 @@ run(function()
 			return _cachedUrl
 		end
 	end
-	local _bu = getgenv()._KingV4v7_getBackendUrl
+	local _bu = getgenv()._DongJunV4_getBackendUrl
 
 	local listsLoaded = false
 	task.spawn(function()
@@ -15275,7 +15275,7 @@ run(function()
 		listsLoaded = true
 	end)
 
-	getgenv()._KingV4v7_staffCounts = {spec=0, closet=0, mod=0, impossible=0}
+	getgenv()._DongJunV4_staffCounts = {spec=0, closet=0, mod=0, impossible=0}
 	local function refreshStaffCounts()
 		local c = {spec=0, closet=0, mod=0, impossible=0}
 		for _, data in pairs(detectedPlayers) do
@@ -15285,7 +15285,7 @@ run(function()
 			elseif ct == 'impossible_join' then c.impossible += 1
 			else c.mod += 1 end
 		end
-		getgenv()._KingV4v7_staffCounts = c
+		getgenv()._DongJunV4_staffCounts = c
 		vapeEvents.StaffCountUpdate:Fire()
 	end
 
@@ -15488,7 +15488,7 @@ run(function()
 	local watchers = {}
 
 	local _req = (syn and syn.request) or (http_request and function(t) return http_request(t) end) or request or function() return {Body='{}'} end
-	local _bu = getgenv()._KingV4v7_getBackendUrl or function()
+	local _bu = getgenv()._DongJunV4_getBackendUrl or function()
 		local ok, res = pcall(function()
 			return _req({Url='https://gist.githubusercontent.com/poopparty/a817668f8805b6d44fa54ff13dc8edf4/raw/url.txt',Method='GET'})
 		end)
@@ -26182,7 +26182,7 @@ run(function()
 						bedwars.GlacialSkaterController:updateMomentum(100, "newValue")
 					end)
 					if not suc then
-						warn(`[KingV4V7 MODULE ISSUE]: [Module - InfKrystal (Starting to update Momentum)] [Error]: {res}`)
+						warn(`[DongJunV4 MODULE ISSUE]: [Module - InfKrystal (Starting to update Momentum)] [Error]: {res}`)
 						runService:UnbindFromRenderStep('InfiniteKrystalMovement')
 					end
 				end)
@@ -26193,7 +26193,7 @@ run(function()
 					bedwars.GlacialSkaterController:updateMomentum(0, "newValue")
 				end)
 				if not suc then
-					warn(`[KingV4V7 MODULE ISSUE]: [Module - InfKrystal (Resetting updateMomentum function)] [Error]: {res}`)
+					warn(`[DongJunV4 MODULE ISSUE]: [Module - InfKrystal (Resetting updateMomentum function)] [Error]: {res}`)
 				end
 			end
 		end
@@ -27554,7 +27554,7 @@ run(function()
 		elseif Mode.Value == 'Camera' then
 			targetPos = gameCamera.CFrame.Position + gameCamera.CFrame.LookVector * 200
 		else
-			vape:CreateNotification('MouseTP', 'Mode is currently nil. Report to KingV4 ', 6, 'warning')
+			vape:CreateNotification('MouseTP', 'Mode is currently nil. Report to DongJunV4 ', 6, 'warning')
 			return
 		end
 
@@ -27605,7 +27605,7 @@ run(function()
 				)
 			end
 		else
-			vape:CreateNotification('MouseTP', 'Movement is currently nil. Report to KingV4 ', 6, 'warning')
+			vape:CreateNotification('MouseTP', 'Movement is currently nil. Report to DongJunV4 ', 6, 'warning')
 			return
 		end
 	end
@@ -30428,7 +30428,7 @@ run(function()
 					if originalLabelColor then hpLabel.TextColor3 = originalLabelColor end
 					if originalLabelFont then hpLabel.Font = originalLabelFont end
 					local stroke = hpLabel:FindFirstChildWhichIsA('UIStroke')
-					if stroke and stroke.Name == 'KingV4Stroke' then stroke:Destroy() end
+					if stroke and stroke.Name == 'Stroke' then stroke:Destroy() end
 				end)
 			end
 		end
@@ -30465,10 +30465,10 @@ run(function()
 		local function ensureStroke()
 			if cachedStroke and cachedStroke.Parent then return end
 			if not hpLabel then return end
-			cachedStroke = hpLabel:FindFirstChild('KingV4Stroke')
+			cachedStroke = hpLabel:FindFirstChild('Stroke')
 			if not cachedStroke then
 				cachedStroke = Instance.new('UIStroke')
-				cachedStroke.Name = 'KingV4Stroke'
+				cachedStroke.Name = 'Stroke'
 				cachedStroke.Color = Color3.new(0, 0, 0)
 				cachedStroke.Thickness = 2
 				cachedStroke.Parent = hpLabel
@@ -31182,7 +31182,7 @@ run(function()
 		if not character:FindFirstChild('HumanoidRootPart') then return end
 
 		nimFolder = Instance.new('Folder')
-		nimFolder.Name = 'KingV4Aura'
+		nimFolder.Name = 'Aura'
 		nimFolder.Parent = workspace
 
 		local setup = setups[nimStyle]
@@ -31237,7 +31237,7 @@ run(function()
 
 	Aura = vape.Categories.Render:CreateModule({
 		Name = 'Aura',
-		Tooltip = 'KingV4 = aura !!',
+		Tooltip = 'DongJunV4 = aura !!',
 		Function = function(callback)
 			if callback then
 				applyAura()
@@ -33194,7 +33194,7 @@ run(function()
 end)
 
 
--- KingV4 killaura 
+-- DongJunV4 killaura 
 local Attacking
 run(function()
     local Killaura
