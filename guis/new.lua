@@ -3665,7 +3665,7 @@ function mainapi:CreateGUI()
 	makeDraggable(window)
 	local logo = Instance.new('ImageLabel')
 	logo.Name = 'VapeLogo'
-	logo.Size = UDim2.fromOffset(1, 0, 0, 8)
+	logo.Size = UDim2.fromOffset(1, 0, 0, 10)
 	logo.BackgroundTransparency = 1
 	logo.Image = getcustomasset('newvape/assets/new/guivape.png')
 	logo.ImageColor3 = select(3, uipallet.Main:ToHSV()) > 0.5 and uipallet.Text or Color3.new(1, 1, 1)
@@ -3678,6 +3678,7 @@ function mainapi:CreateGUI()
 	logov4.Position = UDim2.new(1, -4, 0, 1)
 	logov4.BackgroundTransparency = 1
 	logov4.Image = getcustomasset('newvape/assets/new/guiv4.png')
+	logov4.ImageColor3 = Color3.fromRGB(255, 255, 255)
 	logov4.Size = UDim2.fromOffset(46, 38)
 	logov4.Parent = logo
 	local children = Instance.new('Frame')
