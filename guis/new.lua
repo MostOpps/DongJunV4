@@ -3670,7 +3670,7 @@ function mainapi:CreateGUI()
 	logo.BackgroundTransparency = 1
 	logo.Image = getcustomasset('newvape/assets/new/guivape.png')
 	logo.ImageColor3 = select(3, uipallet.Main:ToHSV()) > 0.5 and uipallet.Text or Color3.new(1, 1, 1)
-    logo.Size = UDim2.fromOffset(170, 60)
+    logo.Size = UDim2.fromOffset(90, 50)
 	logo.Parent = window
 	local logov4 = Instance.new('ImageLabel')
 	logov4.Name = 'V4Logo'
