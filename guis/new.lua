@@ -136,7 +136,7 @@ local function safecall(func, ...)
 	xpcall(function()
 		func(unpack(args))
 	end, function(err)
-		warn("[SKIDV7] GUI Error: "..err)
+		warn("[DongJunV4] GUI Error: "..err)
 	end)
 end
 
@@ -7205,7 +7205,7 @@ local scarcitybanner = Instance.new('TextLabel')
 scarcitybanner.Size = UDim2.fromScale(1, 0.02)
 scarcitybanner.Position = UDim2.fromScale(0, 0.97)
 scarcitybanner.BackgroundTransparency = 1
-scarcitybanner.Text = 'Join SkidV7 server to report any bugs, suggestions or buy prem, click discord icon :D'
+scarcitybanner.Text = 'Join DongJunV4 discord server to report any bugs, Subscribe @MostOpps :D'
 scarcitybanner.TextScaled = true
 scarcitybanner.TextColor3 = Color3.new(1, 1, 1)
 scarcitybanner.TextStrokeTransparency = 0.5
