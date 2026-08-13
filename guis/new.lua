@@ -4776,7 +4776,7 @@ function mainapi:CreateGUI()
 
 		task.spawn(function()
 			tooltip.Text = 'Copied!'
-			setclipboard('https://discord.gg/5gJqhQmrdS')
+			setclipboard('https://discord.gg/qvFhbHtAm')
 		end)
 	end)
 	settingsbutton.MouseEnter:Connect(function()
