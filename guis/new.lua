@@ -3673,7 +3673,7 @@ function mainapi:CreateGUI()
 	logo.Position = UDim2.fromOffset(11, 0)
 	logo.Parent = window
 	local logov4 = Instance.new('ImageLabel')
-	logov4.Name = 'CustomV4Logo'
+	logov4.Name = 'V4Logo'
 	logov4.Size = UDim2.fromOffset(28, 16)
 	logov4.Position = UDim2.new(1, -4, 0, 1)
 	logov4.BackgroundTransparency = 1
