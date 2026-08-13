@@ -3675,7 +3675,7 @@ function mainapi:CreateGUI()
 	local logov4 = Instance.new('ImageLabel')
 	logov4.Name = 'V4Logo'
 	logov4.Size = UDim2.fromOffset(28, 16)
-	logov4.Position = UDim2.new(1, 1, 0, -3)
+	logov4.Position = UDim2.new(1, 1, 0, -6)
 	logov4.BackgroundTransparency = 1
 	logov4.Image = getcustomasset('newvape/assets/new/guiv4.png')
 	logov4.Size = UDim2.fromOffset(33, 31)
