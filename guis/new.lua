@@ -3671,7 +3671,7 @@ function mainapi:CreateGUI()
 	logo.Image = getcustomasset('newvape/assets/new/guivape.png')
 	logo.ImageColor3 = select(3, uipallet.Main:ToHSV()) > 0.5 and uipallet.Text or Color3.new(1, 1, 1)
     logo.Size = UDim2.fromOffset(50, 50)
-	logo.Position = UDim2.fromOffset(10, 0)
+	guivape.Position = UDim2.fromOffset(10, 0)
 	logo.Parent = window
 	local logov4 = Instance.new('ImageLabel')
 	logov4.Name = 'V4Logo'
