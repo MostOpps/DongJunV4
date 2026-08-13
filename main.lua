@@ -18,8 +18,10 @@ local _realLoadstring = clonefunction(loadstring)
 local vape
 local loadstring = function(src, chunkname)
 	local res, err = _realLoadstring(src, chunkname)
-	if err and vape then
-		vape:CreateNotification('Fuzzynuts', 'Failed to load : '..err, 30, 'alert')
+	if err and vape and vape.CreateNotification then
+		pcall(function()
+			vape:CreateNotification('DongJunV4', 'Failed to load : '..err, 30, 'alert')
+		end)
 	end
 	return res
 end
@@ -40,17 +42,19 @@ local function downloadFile(path, func)
 		local success = false
 		for attempt = 1, 3 do
 			local suc, result = pcall(function()
-				return game:HttpGet('https://raw.githubusercontent.com/MostOpps/DongJunV4/' .. readfile('newvape/profiles/commit.txt') .. '/' .. select(1, path:gsub('newvape/', '')), true)
+				return game:HttpGet('https://raw.githubusercontent.com/MostOpps/DongJunV4/' .. (readfile('newvape/profiles/commit.txt') or 'main') .. '/' .. select(1, path:gsub('newvape/', '')), true)
 			end)
-			if suc and result ~= '404: Not Found' then
+			if suc and result and result ~= '404: Not Found' and result ~= '' then
 				res = result
 				success = true
 				break
 			end
-			task.wait(1)
+			task.wait(0.5)
 		end
 		if not success then
-			error('Failed to download ' .. path .. ' after 3 attempts')
+			warn('[Vape] Failed to download ' .. path .. ' (Skipping asset)')
+			writefile(path, '')
+			return ''
 		end
 		if path:find('.lua') then
 			res = '--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.\n' .. res
@@ -96,16 +100,19 @@ pcall(migrateProfiles)
 local function finishLoading()
 	vape.Init = nil
 	if not vape.Load then
-		warn('[Fuzzynuts] vape.Load is nil skipping load')
+		warn('[DongJunV4] vape.Load is nil skipping load')
 		return
 	end
-	vape:Load()
+	
+	pcall(function() vape:Load() end)
+	
 	vape:Clean(task.spawn(function()
 		repeat
 			pcall(vape.Save, vape)
 			task.wait(10)
 		until vape.Loaded == nil
 	end))
+	
 	local teleportedServers
 	vape:Clean(playersService.LocalPlayer.OnTeleport:Connect(function()
 		if (not teleportedServers) and (not shared.VapeIndependent) then
@@ -122,17 +129,18 @@ local function finishLoading()
 			if shared.ValidatedUsername then
 				teleportScript = 'shared.ValidatedUsername = "' .. shared.ValidatedUsername .. '"\n' .. teleportScript
 			end
-			local _ok, _err = pcall(function() vape:Save() end)
-			if not _ok then warn('[Fuzzynuts] save failed before teleport: ' .. tostring(_err)) toclipboard(_err) end
+			pcall(function() vape:Save() end)
 			queue_on_teleport(teleportScript)
 		end
 	end))
+	
 	if not shared.vapereload then
-		if not vape.Categories then return end
-		if vape.Categories.Main.Options['GUI bind indicator'].Enabled then
-			local name = shared.ValidatedUsername and ('wsg, ' .. shared.ValidatedUsername .. ' :D ') or 'welcome '
-			vape:CreateNotification('[DongJunV4] Finished Loading', name .. (vape.VapeButton and 'Press the button in the top right to open GUI' or 'Press ' .. table.concat(vape.Keybind, ' + '):upper() .. ' to open GUI'), 5)
-		end
+		local name = shared.ValidatedUsername and ('wsg, ' .. shared.ValidatedUsername .. ' :D ') or 'welcome '
+		pcall(function()
+			if vape.CreateNotification then
+				vape:CreateNotification('[DongJunV4] Finished Loading', name .. (vape.VapeButton and 'Press the button in the top right to open GUI' or 'Press Shift / Keybind to open GUI'), 5)
+			end
+		end)
 	end
 end
 
@@ -167,39 +175,31 @@ if not isfolder('newvape/assets/' .. gui) then
 	makefolder('newvape/assets/' .. gui)
 end
 
--- only the new GUI assets, non-blocking
 task.spawn(function()
-	for _, name in ipairs(ASSETS_NEW) do pcall(downloadFile, 'newvape/assets/new/' .. name) end
+	for _, name in ipairs(ASSETS_NEW) do 
+		pcall(downloadFile, 'newvape/assets/new/' .. name) 
+	end
 end)
 
 local guiSource = downloadFile('newvape/guis/' .. gui .. '.lua')
+if not guiSource or guiSource == '' then
+	error('[DongJunV4] Failed to fetch guiSource')
+end
+
 local guiFunc, guiErr = _realLoadstring(guiSource, 'gui')
 if not guiFunc then
-	local errMsg = tostring(guiErr)
-	local lineNum = errMsg:match(':(%d+):')
-	local context = ''
-	if lineNum then
-		local n = tonumber(lineNum)
-		local lines = guiSource:split('\n')
-		local from = math.max(1, n - 2)
-		local to   = math.min(#lines, n + 2)
-		local parts = {}
-		for i = from, to do
-			local marker = i == n and '>>> ' or '    '
-			table.insert(parts, marker .. i .. ': ' .. (lines[i] or ''))
-		end
-		context = '\n\nContext:\n' .. table.concat(parts, '\n')
-	end
-	error('[Fuzzynuts] syntax error in ' .. gui .. '.lua' .. '\n' .. errMsg .. context)
+	error('[DongJunV4] syntax error in ' .. gui .. '.lua\n' .. tostring(guiErr))
 end
+
 vape = guiFunc()
 if not vape then
-	error('[Fuzzynuts] GUI returned nil file may be corrupted try deleting newvape/guis/' .. gui .. '.lua and reinjecting.')
+	error('[DongJunV4] GUI returned nil file may be corrupted try deleting newvape/guis/' .. gui .. '.lua and reinjecting.')
 end
 if not vape.Load then
 	if delfile then pcall(function() delfile('newvape/guis/' .. gui .. '.lua') end) end
-	error('[Fuzzynuts] gui file corrupted (missing load) reinject..')
+	error('[DongJunV4] gui file corrupted (missing load) reinject..')
 end
+
 shared.vape = vape
 task.wait(0.1)
 
@@ -223,20 +223,29 @@ if getgenv().Closet then
 end
 
 if not shared.VapeIndependent then
-	_realLoadstring(downloadFile('newvape/games/universal.lua'), 'universal')()
+	pcall(function()
+		_realLoadstring(downloadFile('newvape/games/universal.lua'), 'universal')()
+	end)
+	
 	local gameFileId = (game.GameId == 2619619496) and (game.PlaceId == 6872265039 and 6872265039 or 6872274481) or game.PlaceId
+	
 	if isfile('newvape/games/' .. gameFileId .. '.lua') then
-		_realLoadstring(downloadFile('newvape/games/' .. gameFileId .. '.lua'), tostring(gameFileId))()
+		pcall(function()
+			_realLoadstring(downloadFile('newvape/games/' .. gameFileId .. '.lua'), tostring(gameFileId))()
+		end)
 	else
 		if not shared.VapeDeveloper then
 			local suc, res = pcall(function()
-				return game:HttpGet('https://raw.githubusercontent.com/MostOpps/DongJunV4/' .. readfile('newvape/profiles/commit.txt') .. '/games/' .. gameFileId .. '.lua', true)
+				return game:HttpGet('https://raw.githubusercontent.com/MostOpps/DongJunV4/' .. (readfile('newvape/profiles/commit.txt') or 'main') .. '/games/' .. gameFileId .. '.lua', true)
 			end)
-			if suc and res ~= '404: Not Found' then
-				_realLoadstring(downloadFile('newvape/games/' .. gameFileId .. '.lua'), tostring(gameFileId))()
+			if suc and res and res ~= '404: Not Found' then
+				pcall(function()
+					_realLoadstring(downloadFile('newvape/games/' .. gameFileId .. '.lua'), tostring(gameFileId))()
+				end)
 			end
 		end
 	end
+	
 	finishLoading()
 else
 	vape.Init = finishLoading
